@@ -23,7 +23,7 @@ mp::lerp::~lerp()
     // deconstructor
 }
 
-mp::vec2 mp::lerp::operator[](double t)
+mp::vec2 mp::lerp::operator()(double t) const
 {
     int index = (int) t;
     // t -= index;
@@ -43,7 +43,7 @@ mp::quadratic_bezier::~quadratic_bezier()
     // deconstructor
 }
 
-mp::vec2 mp::quadratic_bezier::operator[](double t)
+mp::vec2 mp::quadratic_bezier::operator()(double t) const
 {
     // from start approach control reach end
 
@@ -63,7 +63,7 @@ mp::cubic_bezier::~cubic_bezier()
     // deconstructor
 }
 
-mp::vec2 mp::cubic_bezier::operator[](double t)
+mp::vec2 mp::cubic_bezier::operator()(double t) const
 {    
     double t1 = (1-t);
     double t2 = t1 * t1;
@@ -88,7 +88,7 @@ mp::catmull_rom::~catmull_rom()
     // deconstructor
 }
 
-mp::vec2 mp::catmull_rom::operator[](double t)
+mp::vec2 mp::catmull_rom::operator()(double t) const
 {
     double tt = t * t;
     double ttt = tt * t;
@@ -114,7 +114,7 @@ mp::hermite::~hermite()
     // deconstructor
 }
 
-mp::vec2 mp::hermite::operator[](double t)
+mp::vec2 mp::hermite::operator()(double t) const
 {
     double tt = t*t;
     double ttt = tt * t;

@@ -3,43 +3,10 @@
 
 #include <vector>
 
-// #include <utility>
+#include "vec2.hpp"
 
 namespace mp
 {
-
-    struct vec2
-    {
-        double x, y;
-
-        vec2(double, double);
-        ~vec2();
-        
-        vec2 operator+(vec2) const;
-        vec2 operator+(double) const;
-        vec2 &operator+=(vec2);
-        vec2 &operator+=(double);
-
-        vec2 operator-(vec2) const;
-        vec2 operator-(double) const;
-        vec2 &operator-=(vec2);
-        vec2 &operator-=(double);
-
-        vec2 operator*(vec2) const;
-        vec2 operator*(double) const;
-        vec2 &operator*=(vec2);
-        vec2 &operator*=(double);
-
-        vec2 operator/(vec2) const;
-        vec2 operator/(double) const;
-        vec2 &operator/=(vec2);
-        vec2 &operator/=(double);
-
-        double dot(vec2) const;
-        double length() const;
-        
-        vec2 normalize() const;
-    };
     
     class curve
     {
@@ -50,7 +17,7 @@ namespace mp
             curve();
             ~curve();
 
-            virtual vec2 operator[](double t) = 0;
+            virtual vec2 operator()(double t) const = 0;
     };
     
 
@@ -60,7 +27,7 @@ namespace mp
             lerp(vec2, vec2);
             ~lerp();
 
-            virtual vec2 operator[](double t) override;
+            virtual vec2 operator()(double t) const override;
 
     };
 
@@ -70,7 +37,7 @@ namespace mp
             quadratic_bezier(vec2, vec2, vec2);
             ~quadratic_bezier();
 
-            virtual vec2 operator[](double t) override;
+            virtual vec2 operator()(double t) const override;
             
     };
 
@@ -80,7 +47,7 @@ namespace mp
             cubic_bezier(vec2, vec2, vec2, vec2);
             ~cubic_bezier();
 
-            virtual vec2 operator[](double t) override;
+            virtual vec2 operator()(double t) const override;
     };
 
     
@@ -90,7 +57,7 @@ namespace mp
             catmull_rom(vec2, vec2, vec2, vec2);
             ~catmull_rom();
 
-            virtual vec2 operator[](double t) override;
+            virtual vec2 operator()(double t) const override;
     };
 
     class hermite : public curve
@@ -99,7 +66,7 @@ namespace mp
             hermite(vec2, vec2, vec2, vec2);
             ~hermite();
 
-            virtual vec2 operator[](double t) override;
+            virtual vec2 operator()(double t) const override;
     };
 }
 

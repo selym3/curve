@@ -30,7 +30,9 @@ int main()
 
     for (double t = 0; t <= 1;t+=0.05)
     {
-        mp::vec2 current = lp[t];
+        mp::vec2 current = lp(t);
+
+        mp::vec2 c = current + 3;
 
         std::cout << "(" << current.x << ", " << current.y << "), ";
     }
