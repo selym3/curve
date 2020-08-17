@@ -14,50 +14,48 @@ mp::vec2::~vec2()
     // deconstructor
 }
 
-mp::vec2 mp::vec2::operator+(vec2 rhs) const
+mp::vec2 mp::operator+(const mp::vec2& lhs, const mp::vec2& rhs)
 {
-    return vec2(
-        rhs.x + x, rhs.y + y
-    );
+    return mp::vec2(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
-mp::vec2 mp::vec2::operator+(double rhs) const
+mp::vec2 mp::operator+(const mp::vec2& lhs, double rhs)
 {
-    return vec2(
-        x + rhs, y + rhs
-    );
+    return mp::vec2(lhs.x + rhs, lhs.y + rhs);
 }
 
-mp::vec2 &mp::vec2::operator+=(vec2 rhs)
+mp::vec2 &mp::vec2::operator+=(const vec2& rhs)
 {
-
-    this->x += rhs.x;
-    this->y += rhs.y;
+    x += rhs.x;
+    y += rhs.y;
 
     return *this;
 }
 
 mp::vec2 &mp::vec2::operator+=(double rhs)
 {
-    this->x += rhs;
-    this->y += rhs;
+    x += rhs;
+    y += rhs;
     
     return *this;
 }
 
-mp::vec2 mp::vec2::operator-(vec2 rhs) const
+mp::vec2 mp::operator-(const vec2& lhs, const vec2& rhs)
 {
-    return vec2(
-        x - rhs.x, y - rhs.y
-    );
+    return mp::vec2(lhs.x - rhs.x, lhs.y - rhs.y);
 }
 
-mp::vec2 mp::vec2::operator-(double rhs) const
+mp::vec2 mp::operator-(const vec2& lhs, double rhs)
 {
-    return vec2(x - rhs, y - rhs);
+    return mp::vec2(lhs.x - rhs, lhs.y - rhs);
 }
 
-mp::vec2 &mp::vec2::operator-=(vec2 rhs)
+mp::vec2 mp::operator-(double lhs, const vec2& rhs)
+{
+    return mp::vec2(lhs - rhs.x, lhs - rhs.y);
+}
+
+mp::vec2 &mp::vec2::operator-=(const vec2& rhs)
 {
     this->x -= rhs.x;
     this->y -= rhs.y;
@@ -73,20 +71,22 @@ mp::vec2 &mp::vec2::operator-=(double rhs)
     return *this;
 }
 
-mp::vec2 mp::vec2::operator*(vec2 rhs) const
+mp::vec2 mp::operator*(const vec2& lhs, const vec2& rhs)
 {
-    return vec2(
-        x * rhs.x,
-        y * rhs.y
-    );
+    return mp::vec2(lhs.x * rhs.x, lhs.y * rhs.y);
 }
 
-mp::vec2 mp::vec2::operator*(double rhs) const
+mp::vec2 mp::operator*(const vec2& lhs, double rhs)
 {
-    return vec2(x * rhs, y * rhs);
+    return mp::vec2(lhs.x * rhs, lhs.y * rhs);
 }
 
-mp::vec2 &mp::vec2::operator*=(vec2 rhs)
+mp::vec2 mp::operator*(double lhs, const vec2& rhs)
+{
+    return mp::vec2(lhs * rhs.x, lhs * rhs.y);
+}
+
+mp::vec2 &mp::vec2::operator*=(const vec2& rhs)
 {
     this->x *= rhs.x;
     this->y *= rhs.y;
@@ -102,20 +102,22 @@ mp::vec2 &mp::vec2::operator*=(double rhs)
     return *this;
 }
 
-mp::vec2 mp::vec2::operator/(vec2 rhs) const
+mp::vec2 mp::operator/(const vec2& lhs, const vec2& rhs)
 {
-    return vec2(
-        x / rhs.x,
-        y / rhs.y
-    );
+    return mp::vec2(lhs.x / rhs.x, lhs.y / rhs.y);
 }
 
-mp::vec2 mp::vec2::operator/(double rhs) const
+mp::vec2 mp::operator/(const vec2& lhs, double rhs)
 {
-    return vec2(x/rhs, y/rhs);
+    return mp::vec2(lhs.x / rhs, lhs.y / rhs);
 }
 
-mp::vec2 &mp::vec2::operator/=(vec2 rhs)
+mp::vec2 mp::operator/(double lhs, const vec2& rhs)
+{
+    return mp::vec2(lhs / rhs.x, lhs / rhs.y);
+}
+
+mp::vec2 &mp::vec2::operator/=(const vec2& rhs)
 {
     this->x /= rhs.x;
     this->y /= rhs.y;
@@ -131,7 +133,7 @@ mp::vec2 &mp::vec2::operator/=(double rhs)
     return *this;
 }
 
-double mp::vec2::dot(vec2 rhs) const
+double mp::vec2::dot(const vec2& rhs) const
 {
     return x * rhs.x + y * rhs.y;
 }
@@ -144,4 +146,14 @@ double mp::vec2::length() const
 mp::vec2 mp::vec2::normalize() const
 {
     return *this / length();
+}
+
+bool mp::vec2::operator==(const vec2& rhs)
+{
+    return x == rhs.x && y == rhs.y;
+}
+
+bool mp::vec2::operator!=(const vec2& rhs)
+{
+    return !(*this == rhs);
 }
