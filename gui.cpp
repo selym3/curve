@@ -8,7 +8,7 @@
 #define WIDTH (600)
 #define HEIGHT (600)
 
-#define T_STEP (0.005)
+#define T_STEP (0.01)
 
 class CurveTracker
 {
@@ -116,7 +116,7 @@ int main(void)
 
     SDL_Rect to_draw{0, 0, 10, 10};
 
-    mp::quadratic_bezier curve({0,0}, {100,50}, {100, 100});
+    mp::bezier curve({{0,0}, {100, 50}, {25,75}, {300, 300}, {100, 100}});
 
     CurveTracker tracker(curve);
 
@@ -195,6 +195,14 @@ int main(void)
 
             SDL_RenderFillRect(renderer, &to_draw);
         }
+
+
+        mp::vec2 midpoint = tracker.Curve()(0.5);
+
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+
+        SetRect(to_draw, midpoint);
+        SDL_RenderFillRect(renderer, &to_draw);
 
         SDL_RenderPresent(renderer);
     }

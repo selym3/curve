@@ -15,7 +15,9 @@ int main()
     // mp::quadratic_bezier lp({0,0}, {0.5,2}, {1,1});
     // mp::cubic_bezier lp({0,0},{0,1},{1,0}, {1,1});
     // mp::catmull_rom lp({0,1}, { 0, 0 } , {1, 1}, {1, 0});
-    mp::hermite lp({10,-10}, {100, 100}, {1,1}, {1 , -1});
+    // mp::hermite lp({10,-10}, {100, 100}, {1,1}, {1 , -1});
+
+    mp::bezier lp ({{0,0}, {0,1}, {1,0}, {1,1}});
 
     std::cout << "[ ";
 
@@ -28,11 +30,11 @@ int main()
 
     std::cout << "[ ";
 
-    for (double t = 0; t <= 1;t+=0.05)
+    const auto t_step = 0.01;
+
+    for (double t = 0; t <= 1 + t_step;t+=t_step)
     {
         mp::vec2 current = lp(t);
-
-        mp::vec2 c = current + 3;
 
         std::cout << "(" << current.x << ", " << current.y << "), ";
     }
