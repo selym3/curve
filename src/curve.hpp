@@ -68,6 +68,17 @@ namespace mp
 
             virtual vec2 operator()(double t) const override;
     };
+
+    class bezier : public curve
+    {
+        private:
+            int size;
+        public:
+            bezier(const std::vector<vec2> &);
+            ~bezier();
+
+            virtual vec2 operator()(double t) const override;  
+    };
 }
 
 #endif

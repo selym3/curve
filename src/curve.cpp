@@ -46,7 +46,6 @@ mp::quadratic_bezier::~quadratic_bezier()
 mp::vec2 mp::quadratic_bezier::operator()(double t) const
 {
     // from start approach control reach end
-
     return points[1] + (points[0]-points[1]) * (1-t)*(1-t) + (points[2] - points[1]) * t * t;
 }
 
@@ -126,3 +125,56 @@ mp::vec2 mp::hermite::operator()(double t) const
 
     return start * (2 * ttt - 3 * tt + 1) + tan1 * (ttt - 2 * tt + t) + end * (-2 * ttt + 3 * tt) + tan2 * (ttt - tt);
 }
+
+// TODO: TEST
+#include <assert.h>
+
+#include "m_util.h"
+
+// #include <iostream>
+
+mp::bezier::bezier(const std::vector<vec2> &new_points)
+{
+    size = new_points.size();
+
+    // come up with a better way to throw this error
+    assert(size >= 2);
+    
+    // copy over points
+    points = std::move(new_points);
+}
+
+mp::bezier::~bezier()
+{
+    // deconstructor
+}
+
+mp::vec2 mp::bezier::operator()(double t) const
+{
+    mp::vec2 out(0,0);
+
+    const int n = size-1;
+
+    const double w = 1 - t;
+
+    double ww = ufpow(1-t, n);
+    double tt = 1;
+
+    for (int i = 0; i <= n; ++i )
+    {
+        // binomial coefficient
+        // there is a chance i dont have to recalculate this everytime because
+        // (n k) = (n-1 k) + (n-1 k-1)
+        int b_coeff = nCr(n, i);
+
+        // std::cout << "[" << t << "]p" << i << " * ( " << n << " choose " << i << ")(" << b_coeff <<") * t^" << i << "("<< tt <<") * (1-t)^" << (n-i) << "("<< ww <<")\n";
+
+        out += (points[i] * b_coeff * tt * ww);
+
+        tt *= t;
+        ww /= w;
+    }
+
+    return out;
+}
+// TODO END 
