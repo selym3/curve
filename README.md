@@ -20,12 +20,16 @@ collection of curve representations in c++
   * catmull rom spline restricted to a start and end point with two anchor points.
 * hermite
   * hermite spline with a start, start tangent, end, and end_tangent defined.
-  * (i cant tell if it's working properly)
+* bezier
+  * bezier curve compatible with n points (first and last are always start and end)
 
 ## TODO
 
 * update curve with length(), first, second derivative() functions
+* Deprecate hermite spline or change the algorithm
 * upgrade curve gui
-  * add simple abstraction for different gui implementations (so i can implement with opengl and sdl)
+  * add simple abstraction for different gui implementations (so i can implement with opengl in addition to sdl)
   * when drawing the spline (or calculating the points in general) i could use the length (function not implemented yet) to automatically determine what the t_step needs to be
   * figure out how to do polymorphic lists in order to add multiple curves to gui
+* consider adding protection to the list of points that is stored in curve (and then adding iterator methods and special add / remove methods in bezier because it's number of poitns can change and it will still work)
+* add driver code for the general bezier curve that allows you to add points & add polymorphic curve functionality to the gui.cpp demonstration
