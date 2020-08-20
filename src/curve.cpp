@@ -12,18 +12,18 @@ mp::curve::~curve()
     // deconstructor
 }
 
-mp::lerp::lerp(vec2 a, vec2 b): curve()
+mp::line::line(vec2 a, vec2 b): curve()
 {
     points.push_back(a);
     points.push_back(b);
 }
 
-mp::lerp::~lerp()
+mp::line::~line()
 {
     // deconstructor
 }
 
-mp::vec2 mp::lerp::operator()(double t) const
+mp::vec2 mp::line::operator()(double t) const
 {
     int index = (int) t;
     // t -= index;
@@ -74,7 +74,7 @@ mp::vec2 mp::cubic_bezier::operator()(double t) const
     return points[0] * t3 + points[1] * 3 * t2 * t + points[2] * 3 * t1 * tt + points[3] * ttt;
 }
 
-mp::catmull_rom::catmull_rom(vec2 control1, vec2 start, vec2 end, vec2 control2)
+mp::catmull_rom::catmull_rom(vec2 control1, vec2 start, vec2 end, vec2 control2): curve()
 {
     points.push_back(control1);
     points.push_back(start);
@@ -100,12 +100,18 @@ mp::vec2 mp::catmull_rom::operator()(double t) const
     return (points[0] * q1 + points[1] * q2 + points[2] * q3 + points[3] * q4) * 0.5;
 }
 
-mp::hermite::hermite(vec2 start, vec2 start_tangent, vec2 end, vec2 end_tangent)
+mp::hermite::hermite(vec2 start, vec2 start_tangent, vec2 end, vec2 end_tangent): curve()
 {
     points.push_back(start);
-    points.push_back(start + start_tangent);
+    points.push_back(start_tangent);
     points.push_back(end);
-    points.push_back(end + end_tangent);
+    points.push_back(end_tangent);
+}
+
+mp::hermite::hermite(pair start_point, pair end_point): 
+hermite(start_point.first, start_point.first + start_point.second, end_point.first, end_point.first + end_point.second)
+{
+    // constructor
 }
 
 mp::hermite::~hermite()
@@ -126,6 +132,17 @@ mp::vec2 mp::hermite::operator()(double t) const
     return start * (2 * ttt - 3 * tt + 1) + tan1 * (ttt - 2 * tt + t) + end * (-2 * ttt + 3 * tt) + tan2 * (ttt - tt);
 }
 
+mp::cardinal::cardinal(mp::vec2 control1, mp::vec2 start, mp::vec2 end, mp::vec2 control2, double tightness):
+hermite(start, tightness * (control2 - end), end, tightness * (control2 - start))
+{
+
+}
+
+mp::cardinal::~cardinal()
+{
+    
+}
+
 // TODO: TEST
 #include <assert.h>
 
@@ -133,7 +150,7 @@ mp::vec2 mp::hermite::operator()(double t) const
 
 // #include <iostream>
 
-mp::bezier::bezier(const std::vector<vec2> &new_points)
+mp::bezier::bezier(const std::vector<vec2> &new_points): curve()
 {
     size = new_points.size();
 
