@@ -11,7 +11,7 @@
 int main()
 {
 
-    // mp::lerp lp({ 0, 0 }, {1, 1});
+    // mp::line lp({ 0, 0 }, {1, 1});
     // mp::quadratic_bezier lp({0,0}, {0.5,2}, {1,1});
     // mp::cubic_bezier lp({0,0},{0,1},{1,0}, {1,1});
     // mp::catmull_rom lp({0,1}, { 0, 0 } , {1, 1}, {1, 0});

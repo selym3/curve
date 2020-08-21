@@ -10,7 +10,7 @@
 
 #define T_STEP (0.01)
 
-class CurveTracker
+class curve_tracker
 {
 
 private:
@@ -26,14 +26,14 @@ private:
     }
 
 public:
-    CurveTracker(mp::curve &target) : target(target)
+    curve_tracker(mp::curve &target) : target(target)
     {
         i = 0;
 
         Update();
     }
 
-    ~CurveTracker()
+    ~curve_tracker()
     {
         // deconstructor
     }
@@ -71,15 +71,6 @@ public:
         this->target = target;
     }
 
-    void NextCurve()
-    {
-
-    }
-
-    void PrevCurve()
-    {
-
-    }
 };
 
 int main(void)
@@ -114,11 +105,13 @@ int main(void)
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     SDL_Event event;
 
-    SDL_Rect to_draw{0, 0, 10, 10};
+    SDL_Rect to_draw = {0, 0, 10, 10};
 
-    mp::bezier curve({{0,0}, {100, 50}, {25,75}, {300, 300}, {100, 100}});
+    // mp::hermite curve({0,0}, {100, 0}, {100,100}, {200, 100});
 
-    CurveTracker tracker(curve);
+    mp::catmull_rom curve({0,0}, {100, 250}, {200,250}, {300, 0});
+
+    curve_tracker tracker(curve);
 
     auto SetRect = [&](SDL_Rect &rect, const mp::vec2 &src) {
         rect.x = src.x - rect.w / 2.0;
