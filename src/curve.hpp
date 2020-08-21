@@ -75,16 +75,7 @@ namespace mp
             virtual vec2 operator()(double t) const override;
     };
 
-    class cardinal : public hermite
-    {
-        public:
-            cardinal(vec2, vec2, vec2, vec2, double tightness = 0.5);
-            ~cardinal();
-
-            // virtual vec2 operator()(double t) const override;
-    };
-
-    
+    // an implementation of catmull_rom spline separate from a hermite spline    
     class catmull_rom : public curve
     {
         public:

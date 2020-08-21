@@ -132,17 +132,6 @@ mp::vec2 mp::hermite::operator()(double t) const
     return start * (2 * ttt - 3 * tt + 1) + tan1 * (ttt - 2 * tt + t) + end * (-2 * ttt + 3 * tt) + tan2 * (ttt - tt);
 }
 
-mp::cardinal::cardinal(mp::vec2 control1, mp::vec2 start, mp::vec2 end, mp::vec2 control2, double tightness):
-hermite(start, tightness * (control2 - end), end, tightness * (control2 - start))
-{
-
-}
-
-mp::cardinal::~cardinal()
-{
-    
-}
-
 // TODO: TEST
 #include <assert.h>
 
@@ -157,7 +146,7 @@ mp::bezier::bezier(const std::vector<vec2> &new_points): curve()
     // come up with a better way to throw this error
     assert(size >= 2);
     
-    // copy over points
+    // how to copy over points
     points = std::move(new_points);
 }
 
@@ -174,7 +163,7 @@ mp::vec2 mp::bezier::operator()(double t) const
 
     const double w = 1 - t;
 
-    double ww = ufpow(1-t, n);
+    double ww = ufpow(w, n);
     double tt = 1;
 
     for (int i = 0; i <= n; ++i )
