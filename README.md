@@ -32,4 +32,4 @@ collection of curve representations in c++
 * create 3d renderer <-> incorporate n-dimensional vector
 * FIX HEADER FILE
 * Remove unneeded cpp source files
-
+* use std::initializer_list (and consider varargs for m_vector.hpp)
