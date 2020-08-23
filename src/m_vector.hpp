@@ -68,9 +68,9 @@ public:
         return std::sqrt(out);
     }
 
-    T& operator[](int index) const { return _data[index]; }
+    T& operator[](int index) { return _data[index]; }
 
-    T& at(int index) const { return _data.at(index); }
+    T& at(int index) { return _data.at(index); }
 
     m_vector& operator+=(const m_vector& rhs)
     {

@@ -36,8 +36,8 @@ namespace mp
     public:
         line(mp::vec<D> start, mp::vec<D> end)
         {
-            points.push_back(start);
-            points.push_back(end);
+            this->points.push_back(start);
+            this->points.push_back(end);
         }
 
         ~line() {}
@@ -46,7 +46,7 @@ namespace mp
         {
             int index = 0; // (int) t;
 
-            return points[index] + ((points[index + 1] - points[index]) * t);
+            return this->points[index] + ((this->points[index + 1] - this->points[index]) * t);
         }
     };
 
@@ -61,16 +61,16 @@ namespace mp
     public:
         quadratic_bezier(mp::vec<D> start, mp::vec<D> to_approach, mp::vec<D> end)
         {
-            points.push_back(start);
-            points.push_back(to_approach);
-            points.push_back(end);
+            this->points.push_back(start);
+            this->points.push_back(to_approach);
+            this->points.push_back(end);
         }
 
         ~quadratic_bezier() {}
 
         virtual mp::vec<D> operator()(double t) const override
         {
-            return points[1] + (points[0] - points[1]) * (1 - t) * (1 - t) + (points[2] - points[1]) * t * t;
+            return this->points[1] + (this->points[0] - this->points[1]) * (1 - t) * (1 - t) + (this->points[2] - this->points[1]) * t * t;
         }
     };
 
@@ -84,10 +84,10 @@ namespace mp
     public:
         cubic_bezier(mp::vec<D> start, mp::vec<D> to_approach, mp::vec<D> then_approach, mp::vec<D> end)
         {
-            points.push_back(start);
-            points.push_back(to_approach);
-            points.push_back(then_approach);
-            points.push_back(end);
+            this->points.push_back(start);
+            this->points.push_back(to_approach);
+            this->points.push_back(then_approach);
+            this->points.push_back(end);
         }
 
         ~cubic_bezier() {}
@@ -101,19 +101,22 @@ namespace mp
             double tt = t * t;
             double ttt = tt * t;
 
-            return points[0] * t3 + points[1] * 3 * t2 * t + points[2] * 3 * t1 * tt + points[3] * ttt;
+            return this->points[0] * t3 + this->points[1] * 3 * t2 * t + this->points[2] * 3 * t1 * tt + this->points[3] * ttt;
         }
     };
 
     /*
     Illegal argument exception for bezier curve.
     */
-    class bezier_exception : public exception
+    class bezier_exception : public std::exception
     {
         virtual const char *what() const throw()
         {
             return "Number of points provided for a bezier curve must be >= 2";
         }
+
+    public:
+        bezier_exception() {}
     };
 
     /*
@@ -125,17 +128,17 @@ namespace mp
     class bezier : public curve<D>
     {
     private:
-        int size;
+        std::size_t size;
 
     public:
-        bezier(const std::vector<mp::vec<D>> &b_points) : size{b_points.size}
+        bezier(const std::vector<mp::vec<D>> &b_points) : size{b_points.size()}
         {
             if (size < 2)
             {
-                throw bezier_exception;
+                throw mp::bezier_exception();
             }
 
-            points = b_points;
+            this->points = b_points;
         }
 
         ~bezier() {}
@@ -157,7 +160,7 @@ namespace mp
                 // (n k) = (n-1 k) + (n-1 k-1) ???
                 int b_coeff = nCr(n, i);
 
-                out += (points[i] * b_coeff * tt * ww);
+                out += (this->points[i] * b_coeff * tt * ww);
 
                 tt *= t;
                 ww /= w;
@@ -188,10 +191,10 @@ namespace mp
     public:
         hermite(mp::vec<D> start, mp::vec<D> start_tangent, mp::vec<D> end, mp::vec<D> end_tangent)
         {
-            points.push_back(start);
-            points.push_back(start_tangent);
-            points.push_back(end);
-            points.push_back(end_tangent);
+            this->points.push_back(start);
+            this->points.push_back(start_tangent);
+            this->points.push_back(end);
+            this->points.push_back(end_tangent);
         }
         hermite(pair<D> start_point, pair<D> end_point) : hermite(start_point.first, start_point.first + start_point.second, end_point.first, end_point.first + end_point.second)
         {
@@ -204,10 +207,10 @@ namespace mp
             double tt = t * t;
             double ttt = tt * t;
 
-            mp::vec<D> &start = points[0];
-            mp::vec<D> &tan1 = points[1] - start;
-            mp::vec<D> &end = points[2];
-            mp::vec<D> &tan2 = points[3] - end;
+            mp::vec<D> &start = this->points[0];
+            mp::vec<D> &tan1 = this->points[1] - start;
+            mp::vec<D> &end = this->points[2];
+            mp::vec<D> &tan2 = this->points[3] - end;
 
             return start * (2 * ttt - 3 * tt + 1) + tan1 * (ttt - 2 * tt + t) + end * (-2 * ttt + 3 * tt) + tan2 * (ttt - tt);
         }
@@ -223,10 +226,10 @@ namespace mp
     public:
         catmull_rom(mp::vec<D> control_a, mp::vec<D> start, mp::vec<D> end, mp::vec<D> control_b)
         {
-            points.push_back(control_a);
-            points.push_back(start);
-            points.push_back(end);
-            points.push_back(control_b);
+            this->points.push_back(control_a);
+            this->points.push_back(start);
+            this->points.push_back(end);
+            this->points.push_back(control_b);
         }
         ~catmull_rom() {}
 
@@ -240,10 +243,10 @@ namespace mp
             double q3 = -3 * ttt + 4 * tt + t;
             double q4 = ttt - tt;
 
-            return (points[0] * q1 + points[1] * q2 + points[2] * q3 + points[3] * q4) * 0.5;
+            return (this->points[0] * q1 + this->points[1] * q2 + this->points[2] * q3 + this->points[3] * q4) * 0.5;
         }
     };
 
-}
+} // namespace mp
 
 #endif

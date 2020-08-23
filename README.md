@@ -33,3 +33,5 @@ collection of curve representations in c++
 * FIX HEADER FILE
 * Remove unneeded cpp source files
 * use std::initializer_list (and consider varargs for m_vector.hpp)
+* TODO: switch to reference values for curve contructors
+* add varargs to m_vector.hpp
