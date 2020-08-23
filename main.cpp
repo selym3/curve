@@ -17,13 +17,18 @@ int main()
     // mp::catmull_rom lp({0,1}, { 0, 0 } , {1, 1}, {1, 0});
     // mp::hermite lp({10,-10}, {100, 100}, {1,1}, {1 , -1});
 
-    mp::bezier lp ({{0,0}, {0,1}, {1,0}, {1,1}});
+    mp::bezier<2> lp ({
+        {{0,0}},
+        {{0,1}},
+        {{1,0}},
+        {{1,1}}
+    });
 
     std::cout << "[ ";
 
     for (auto p : lp.points) 
     {
-        std::cout << " ( " << p.x << ", " << p.y << "), ";
+        std::cout << " ( " << p[0] << ", " << p[1] << "), ";
     }
     
     std::cout << "]\n";
@@ -36,7 +41,7 @@ int main()
     {
         mp::vec2 current = lp(t);
 
-        std::cout << "(" << current.x << ", " << current.y << "), ";
+        std::cout << "(" << current[0] << ", " << current[1] << "), ";
     }
 
     std::cout << "]\n" << std::endl;

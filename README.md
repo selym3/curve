@@ -29,3 +29,7 @@ collection of curve representations in c++
 * add cardinal spline (with methods for changing tightness) / figure out how it's related to catmull-rom spline & hermite spline
 * add kochanek-bartels spline (with methods for changing tension, bias, continuity)
 * create vector with the number of dimensions it's defined in as a template (so that each is a different type) and template some of the curves (the ones that are defined in all dimensions)
+* create 3d renderer <-> incorporate n-dimensional vector
+* FIX HEADER FILE
+* Remove unneeded cpp source files
+

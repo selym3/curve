@@ -14,7 +14,7 @@ class curve_tracker
 {
 
 private:
-    mp::curve &target;
+    mp::curve<2> &target;
 
     const mp::vec2 *v_ptr;
 
@@ -26,7 +26,7 @@ private:
     }
 
 public:
-    curve_tracker(mp::curve &target) : target(target)
+    curve_tracker(mp::curve<2> &target) : target(target)
     {
         i = 0;
 
@@ -61,12 +61,12 @@ public:
         return *v_ptr;
     }
 
-    mp::curve &Curve() const
+    mp::curve<2> &Curve() const
     {
         return target;
     }
 
-    void Set(const mp::curve &target)
+    void Set(const mp::curve<2> &target)
     {
         this->target = target;
     }
@@ -109,7 +109,7 @@ int main(void)
 
     // mp::hermite curve({0,0}, {100, 0}, {100,100}, {200, 100});
 
-    mp::catmull_rom curve({0,0}, {100, 250}, {200,250}, {300, 0});
+    mp::catmull_rom<2> curve({0,0}, {100, 250}, {200,250}, {300, 0});
 
     curve_tracker tracker(curve);
 
