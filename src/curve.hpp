@@ -34,7 +34,7 @@ namespace mp
     class line : public curve<D>
     {
     public:
-        line(mp::vec<D> start, mp::vec<D> end)
+        line(mp::vec<D>&  start, mp::vec<D>& end)
         {
             this->points.push_back(start);
             this->points.push_back(end);
@@ -59,7 +59,7 @@ namespace mp
     class quadratic_bezier : public curve<D>
     {
     public:
-        quadratic_bezier(mp::vec<D> start, mp::vec<D> to_approach, mp::vec<D> end)
+        quadratic_bezier(mp::vec<D>& start, mp::vec<D>& to_approach, mp::vec<D>& end)
         {
             this->points.push_back(start);
             this->points.push_back(to_approach);
@@ -82,7 +82,7 @@ namespace mp
     class cubic_bezier : public curve<D>
     {
     public:
-        cubic_bezier(mp::vec<D> start, mp::vec<D> to_approach, mp::vec<D> then_approach, mp::vec<D> end)
+        cubic_bezier(mp::vec<D>& start, mp::vec<D>& to_approach, mp::vec<D>& then_approach, mp::vec<D>& end)
         {
             this->points.push_back(start);
             this->points.push_back(to_approach);
@@ -131,6 +131,7 @@ namespace mp
         std::size_t size;
 
     public:
+        // Use initializer_list ???
         bezier(const std::vector<mp::vec<D>> &b_points) : size{b_points.size()}
         {
             if (size < 2)
@@ -189,7 +190,7 @@ namespace mp
     class hermite : public curve<D>
     {
     public:
-        hermite(mp::vec<D> start, mp::vec<D> start_tangent, mp::vec<D> end, mp::vec<D> end_tangent)
+        hermite(mp::vec<D>& start, mp::vec<D>& start_tangent, mp::vec<D>& end, mp::vec<D>& end_tangent)
         {
             this->points.push_back(start);
             this->points.push_back(start_tangent);
@@ -224,7 +225,7 @@ namespace mp
     class catmull_rom : public curve<D>
     {
     public:
-        catmull_rom(mp::vec<D> control_a, mp::vec<D> start, mp::vec<D> end, mp::vec<D> control_b)
+        catmull_rom(mp::vec<D>& control_a, mp::vec<D>& start, mp::vec<D>& end, mp::vec<D>& control_b)
         {
             this->points.push_back(control_a);
             this->points.push_back(start);
