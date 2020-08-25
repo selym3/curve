@@ -28,10 +28,6 @@ collection of curve representations in c++
 * update curve with length(), first, second derivative() functions
 * add cardinal spline (with methods for changing tightness) / figure out how it's related to catmull-rom spline & hermite spline
 * add kochanek-bartels spline (with methods for changing tension, bias, continuity)
-* create vector with the number of dimensions it's defined in as a template (so that each is a different type) and template some of the curves (the ones that are defined in all dimensions)
-* create 3d renderer <-> incorporate n-dimensional vector
-* FIX HEADER FILE
-* Remove unneeded cpp source files
 * use std::initializer_list (and consider varargs for m_vector.hpp)
-* TODO: switch to reference values for curve contructors
-* add varargs to m_vector.hpp
+* potentially add back explicit 2d vector and have template overrides for convenience
+* create iterators that returns the point, angle, etc and all information (so it can be looped with object destructuring)
