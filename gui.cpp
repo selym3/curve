@@ -5,10 +5,13 @@
 
 #include <memory>
 
+#include <cmath>
+
 #define WIDTH (600)
 #define HEIGHT (600)
 
 #define T_STEP (0.01)
+#define GRADIENT_STEP T_STEP//(0.01)
 
 class curve_tracker
 {
@@ -51,7 +54,7 @@ public:
     {
         i--;
 
-        i += target.points.size() * ( i < 0);
+        i += target.points.size() * (i < 0);
 
         Update();
     }
@@ -70,7 +73,6 @@ public:
     {
         this->target = target;
     }
-
 };
 
 int main(void)
@@ -107,16 +109,40 @@ int main(void)
 
     SDL_Rect to_draw = {0, 0, 10, 10};
 
-    // mp::hermite curve({0,0}, {100, 0}, {100,100}, {200, 100});
+    mp::line<2> curve({{0,0}}, {{WIDTH, HEIGHT}});
 
-    mp::catmull_rom<2> curve({0,0}, {100, 250}, {200,250}, {300, 0});
+    // mp::quadratic_bezier<2> curve(
+    //     {{0,0}},
+    //     {{ WIDTH * 0.75, HEIGHT / 2}},
+    //     {{0,HEIGHT}}
+    // );
+
+    /*
+    mp::catmull_rom<2> curve(
+        {{0, 100}},
+        {{25, 100}},
+        {{50, 100}},
+        {{75, 100}});
+    */
 
     curve_tracker tracker(curve);
 
-    auto SetRect = [&](SDL_Rect &rect, const mp::vec2 &src) {
-        rect.x = src.x - rect.w / 2.0;
-        rect.y = src.y - rect.h / 2.0;
+    auto SetRect = [&](SDL_Rect &rect, mp::vec<2> &src) {
+        rect.x = src[0] - rect.w / 2.0;
+        rect.y = src[1] - rect.h / 2.0;
     };
+
+    auto RotatePoint = [&](double rads, mp::vec<2> &src) {
+        double sd = std::sin(rads);
+        double cd = std::cos(rads);
+
+        double x = src[0] * cd - src[1] * sd;
+        double y = src[0] * sd + src[1] * cd;
+
+        return mp::vec2({x, y});
+    };
+
+    double current_t = 0.0;
 
     while (running)
     {
@@ -147,6 +173,21 @@ int main(void)
                     tracker.Next();
                 }
 
+                if (keys[SDL_SCANCODE_X])
+                {
+                    current_t += (GRADIENT_STEP);
+                }
+
+                if (keys[SDL_SCANCODE_Z])
+                {
+                    current_t -= (GRADIENT_STEP);
+                }
+
+                if (current_t < 0)
+                    current_t = 0;
+                else if (current_t > 1)
+                    current_t = 1;
+
                 break;
             }
         }
@@ -166,7 +207,7 @@ int main(void)
 
             SDL_RenderFillRect(renderer, &to_draw);
 
-            SDL_RenderDrawLine(renderer, last.x, last.y, current.x, current.y);
+            SDL_RenderDrawLine(renderer, last[0], last[1], current[0], current[1]);
 
             last = current;
         }
@@ -177,10 +218,8 @@ int main(void)
         {
             SDL_SetRenderDrawColor(renderer, 0, 255 * (&p == &tracker.Get()), 255, 0);
 
-            mp::vec2 speed(
-                10 * (-keys[SDL_SCANCODE_A] + keys[SDL_SCANCODE_D]) * ( &p == &tracker.Get()),
-                10 * (-keys[SDL_SCANCODE_W] + keys[SDL_SCANCODE_S]) * ( &p == &tracker.Get())
-            );
+            mp::vec2 speed({(double)(10 * (-keys[SDL_SCANCODE_A] + keys[SDL_SCANCODE_D]) * (&p == &tracker.Get())),
+                            (double)(10 * (-keys[SDL_SCANCODE_W] + keys[SDL_SCANCODE_S]) * (&p == &tracker.Get()))});
 
             p += speed;
 
@@ -189,13 +228,29 @@ int main(void)
             SDL_RenderFillRect(renderer, &to_draw);
         }
 
-
+        // Draw Midpoint
         mp::vec2 midpoint = tracker.Curve()(0.5);
 
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
 
         SetRect(to_draw, midpoint);
         SDL_RenderFillRect(renderer, &to_draw);
+
+        // Draw Angle
+        mp::vec2 point = tracker.Curve()(current_t);
+        mp::vec2 gradient = tracker.Curve()[current_t];
+        double angle = std::atan2(gradient[1], gradient[0]);
+
+        // std::cout << angle << "\n";
+
+        mp::vec2 dir({25, 0});
+        dir = RotatePoint(angle, dir);
+
+        std::cout << current_t << ": " << point << " + " << dir << "\n";
+
+        dir += point;
+
+        SDL_RenderDrawLine(renderer, point[0], point[1], dir[0], dir[1]);
 
         SDL_RenderPresent(renderer);
     }
