@@ -1,5 +1,5 @@
-#ifndef CURVE_UTIL_H
-#define CURVE_UTIL_H
+#ifndef __CURVE_UTIL_H__
+#define __CURVE_UTIL_H__
 
 #include <vector>
 #include <exception>
@@ -13,6 +13,8 @@ namespace mp
     A curve should represent a way to reach an end point
     from a start point in arbitrary space, where parameter
     t is [0,1]
+
+    The gradient and each point can be found as well.
     */
     template <std::size_t D>
     class curve
@@ -24,7 +26,13 @@ namespace mp
         curve() {}
         ~curve() {}
 
+        // virtual mp::vec<D>& start_point() = 0
+        // virutal mp::vec<D>& end_point() = 0
+
+        // virtual double length() = 0;
+
         virtual mp::vec<D> operator()(double t) const = 0;
+        virtual mp::vec<D> operator[](double t) const = 0;
     };
 
     /*
@@ -34,7 +42,7 @@ namespace mp
     class line : public curve<D>
     {
     public:
-        line(mp::vec<D>&  start, mp::vec<D>& end)
+        line(const mp::vec<D> &start, const mp::vec<D> &end)
         {
             this->points.push_back(start);
             this->points.push_back(end);
@@ -48,6 +56,11 @@ namespace mp
 
             return this->points[index] + ((this->points[index + 1] - this->points[index]) * t);
         }
+
+        virtual mp::vec<D> operator[](double t) const override
+        {
+            return (*this)(t) - this->points[0];
+        }
     };
 
     /*
@@ -59,7 +72,7 @@ namespace mp
     class quadratic_bezier : public curve<D>
     {
     public:
-        quadratic_bezier(mp::vec<D>& start, mp::vec<D>& to_approach, mp::vec<D>& end)
+        quadratic_bezier(const mp::vec<D> &start, const mp::vec<D> &to_approach, const mp::vec<D> &end)
         {
             this->points.push_back(start);
             this->points.push_back(to_approach);
@@ -72,6 +85,11 @@ namespace mp
         {
             return this->points[1] + (this->points[0] - this->points[1]) * (1 - t) * (1 - t) + (this->points[2] - this->points[1]) * t * t;
         }
+
+        virtual mp::vec<D> operator[](double t) const override
+        {
+            return 2 * (1 - t) * (this->points[1] - this->points[0]) + 2 * t * (this->points[2] - this->points[1]);
+        }
     };
 
     /*
@@ -82,7 +100,7 @@ namespace mp
     class cubic_bezier : public curve<D>
     {
     public:
-        cubic_bezier(mp::vec<D>& start, mp::vec<D>& to_approach, mp::vec<D>& then_approach, mp::vec<D>& end)
+        cubic_bezier(const mp::vec<D> &start, const mp::vec<D> &to_approach, const mp::vec<D> &then_approach, const mp::vec<D> &end)
         {
             this->points.push_back(start);
             this->points.push_back(to_approach);
@@ -102,6 +120,13 @@ namespace mp
             double ttt = tt * t;
 
             return this->points[0] * t3 + this->points[1] * 3 * t2 * t + this->points[2] * 3 * t1 * tt + this->points[3] * ttt;
+        }
+
+        virtual mp::vec<D> operator[](double t) const override
+        {
+            double t1 = (1 - t);
+
+            return 3 * t1 * t1 * (this->points[1] - this->points[0]) + 6 * t1 * t * (this->points[2] - this->points[1]) + 3 * t * t * (this->points[3] - this->points[2]);
         }
     };
 
@@ -169,6 +194,11 @@ namespace mp
 
             return out;
         }
+
+        virtual mp::vec<D> operator[](double t) const override
+        {
+            return mp::vec2({0, 0});
+        }
     };
 
     /*
@@ -190,14 +220,14 @@ namespace mp
     class hermite : public curve<D>
     {
     public:
-        hermite(mp::vec<D>& start, mp::vec<D>& start_tangent, mp::vec<D>& end, mp::vec<D>& end_tangent)
+        hermite(const mp::vec<D> &start, const mp::vec<D> &start_tangent, const mp::vec<D> &end, const mp::vec<D> &end_tangent)
         {
             this->points.push_back(start);
             this->points.push_back(start_tangent);
             this->points.push_back(end);
             this->points.push_back(end_tangent);
         }
-        hermite(pair<D> start_point, pair<D> end_point) : hermite(start_point.first, start_point.first + start_point.second, end_point.first, end_point.first + end_point.second)
+        hermite(const pair<D> start_point, const pair<D> end_point) : hermite(start_point.first, start_point.first + start_point.second, end_point.first, end_point.first + end_point.second)
         {
         }
 
@@ -215,6 +245,23 @@ namespace mp
 
             return start * (2 * ttt - 3 * tt + 1) + tan1 * (ttt - 2 * tt + t) + end * (-2 * ttt + 3 * tt) + tan2 * (ttt - tt);
         }
+
+        virtual mp::vec<D> operator[](double t) const override
+        {
+            mp::vec<D> &start = this->points[0];
+            mp::vec<D> &tan1 = this->points[1] - start;
+            mp::vec<D> &end = this->points[2];
+            mp::vec<D> &tan2 = this->points[3] - end;
+
+            double tt = t * t;
+
+            double q1 = 6 * tt - 6 * t;
+            double q2 = 3 * tt - 4 * t + 1;
+            double q3 = 6 * t - 6 * tt;
+            double q4 = 3 * tt - 2 * t;
+
+            return start * q1 + tan1 * q2 + end * q3 + tan2 * q4;
+        }
     };
 
     /*
@@ -225,7 +272,7 @@ namespace mp
     class catmull_rom : public curve<D>
     {
     public:
-        catmull_rom(mp::vec<D>& control_a, mp::vec<D>& start, mp::vec<D>& end, mp::vec<D>& control_b)
+        catmull_rom(const mp::vec<D> &control_a, const mp::vec<D> &start, const mp::vec<D> &end, const mp::vec<D> &control_b)
         {
             this->points.push_back(control_a);
             this->points.push_back(start);
@@ -243,6 +290,18 @@ namespace mp
             double q2 = 3 * ttt - 5 * tt + 2;
             double q3 = -3 * ttt + 4 * tt + t;
             double q4 = ttt - tt;
+
+            return (this->points[0] * q1 + this->points[1] * q2 + this->points[2] * q3 + this->points[3] * q4) * 0.5;
+        }
+
+        virtual mp::vec<D> operator[](double t) const override
+        {
+            double tt = t * t;
+
+            double q1 = -3 * tt + 4 * t - 1;
+            double q2 = 9 * tt - 10 * t;
+            double q3 = -9 * tt + 8 * t + 1;
+            double q4 = 3 * tt - 2 * t;
 
             return (this->points[0] * q1 + this->points[1] * q2 + this->points[2] * q3 + this->points[3] * q4) * 0.5;
         }
