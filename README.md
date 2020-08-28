@@ -4,12 +4,13 @@ collection of curve representations in c++
 
 ## classes
 
-* vec2
-  * internal implementation of a 2D Vector
+* m_vector<TYPE, SIZE>
+  * internal implementation of an n-dimensional vector
 * curve
   * abstract representation of a curve
-  * supports function operator for [0,1]
-  * needs length(), first / second derivative
+  * supports function call operator for [0,1] for curve points
+  * supports subscript operator for [0,1] for first derivative
+  * needs length()
 * line
   * linearly interpolate between 2 points
 * quadratic_bezier
@@ -22,12 +23,13 @@ collection of curve representations in c++
   * hermite spline with a start, start tangent, end, and end tangent defined.
 * bezier
   * bezier curve compatible with n points (first and last are always start and end)
+  * needs derivative
 
 ## TODO
 
-* update curve with length(), first, second derivative() functions
+* update curve with length()
 * add cardinal spline (with methods for changing tightness) / figure out how it's related to catmull-rom spline & hermite spline
 * add kochanek-bartels spline (with methods for changing tension, bias, continuity)
 * use std::initializer_list (and consider varargs for m_vector.hpp)
 * potentially add back explicit 2d vector and have template overrides for convenience
-* create iterators that returns the point, angle, etc and all information (so it can be looped with object destructuring)
+* add first derivative for bezier class
