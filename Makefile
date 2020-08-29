@@ -12,4 +12,7 @@ main: compile
 	clang++ main.cpp bin/m_util.o -lm -o main
 
 gui: compile
-	clang++ gui.cpp -lm -lSDL2 -o gui
+	clang++ gui.cpp bin/m_util.o -lm -lSDL2 -o gui
+
+bezier: compile
+	clang++ bezier.cpp bin/m_util.o -lm -lSDL2 -o bezier
