@@ -2,3 +2,4 @@ main
 bin/
 gui
 .vscode/
+bezier
