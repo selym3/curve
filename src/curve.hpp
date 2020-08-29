@@ -153,13 +153,13 @@ namespace mp
     class bezier : public curve<D>
     {
     private:
-        std::size_t size;
+        // std::size_t size;
 
     public:
         // Use initializer_list ???
-        bezier(const std::vector<mp::vec<D>> &b_points) : size{b_points.size()}
+        bezier(const std::vector<mp::vec<D>> &b_points) //: size{b_points.size()}
         {
-            if (size < 2)
+            if (b_points.size() < 2)
             {
                 throw mp::bezier_exception();
             }
@@ -173,7 +173,7 @@ namespace mp
         {
             mp::vec<D> out;
 
-            const int n = size - 1;
+            const int n = this->points.size() - 1;
 
             const double w = 1 - t;
 
@@ -197,7 +197,30 @@ namespace mp
 
         virtual mp::vec<D> operator[](double t) const override
         {
-            return mp::vec2({0, 0});
+            mp::vec<D> out;
+
+            const int n = this->points.size() - 1;
+
+            const double w = (1 - t);
+
+            double ww = ufpow(w, n);
+            double tt = 1;
+
+            for (int i = 0; i <= n; ++i)
+            {
+                const int b_coeff = nCr(n, i);
+                
+                out += this->points[i] * b_coeff * (
+                    tt * (i - n) * (ww / w)
+                    +
+                    i * (tt / t) * ww
+                );
+
+                ww /= w;
+                tt *= t;
+            }
+
+            return out;
         }
     };
 
