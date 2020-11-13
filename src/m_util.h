@@ -1,5 +1,5 @@
-#ifndef M_UTIL_H
-#define M_UTIL_H
+#ifndef __M_UTIL_H__
+#define __M_UTIL_H__
 
 /*
 Some math functions compiled with -O3 for calculating curves

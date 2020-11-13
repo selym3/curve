@@ -7,11 +7,11 @@
 
 #include <cmath>
 
-#define WIDTH (600)
-#define HEIGHT (600)
+#define WIDTH (1920)
+#define HEIGHT (1080)
 
-#define T_STEP (0.01)
-#define GRADIENT_STEP T_STEP//(0.01)
+#define T_STEP (0.001)
+#define GRADIENT_STEP (0.01) //T_STEP 
 
 class curve_tracker
 {
@@ -109,23 +109,22 @@ int main(void)
 
     SDL_Rect to_draw = {0, 0, 10, 10};
 
-    mp::line<2> curve({{0,0}}, {{WIDTH, HEIGHT}});
-
-    // mp::quadratic_bezier<2> curve(
-    //     {{0,0}},
-    //     {{ WIDTH * 0.75, HEIGHT / 2}},
-    //     {{0,HEIGHT}}
-    // );
-
-    /*
-    mp::catmull_rom<2> curve(
-        {{0, 100}},
-        {{25, 100}},
-        {{50, 100}},
-        {{75, 100}});
-    */
+    mp::bezier<2> curve({
+        {{0,0}},
+        {{WIDTH, HEIGHT}}
+    });
 
     curve_tracker tracker(curve);
+
+    auto AddPoint = [&](const mp::vec2 &pt) { 
+        int n = curve.points.size() - 1;
+
+        mp::vec2 end_point = curve.points[n];
+
+        curve.points[n] = pt;
+
+        curve.points.push_back(end_point);
+    };
 
     auto SetRect = [&](SDL_Rect &rect, mp::vec<2> &src) {
         rect.x = src[0] - rect.w / 2.0;
@@ -152,6 +151,15 @@ int main(void)
             {
             case SDL_QUIT:
                 running = false;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+
+                int x, y;
+
+                SDL_GetMouseState(&x, &y);
+
+                AddPoint({{(double) x, (double) y}});
+
                 break;
             case SDL_KEYDOWN:
             case SDL_KEYUP:
@@ -184,9 +192,9 @@ int main(void)
                 }
 
                 if (current_t < 0)
-                    current_t = 0;
+                    current_t = GRADIENT_STEP;
                 else if (current_t > 1)
-                    current_t = 1;
+                    current_t = 1 - GRADIENT_STEP;
 
                 break;
             }
@@ -246,7 +254,7 @@ int main(void)
         mp::vec2 dir({25, 0});
         dir = RotatePoint(angle, dir);
 
-        std::cout << current_t << ": " << point << " + " << dir << "\n";
+        // std::cout << current_t << ": " << point << " + " << dir << "\n";
 
         dir += point;
 
